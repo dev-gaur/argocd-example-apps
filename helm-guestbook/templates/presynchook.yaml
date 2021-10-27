@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+ generateName: accurics-pre-hook-
+ namespace: {{ .Release.Namespace }}
+ annotations:
+   argocd.argoproj.io/hook: PreSync
+spec:
+ ttlSecondsAfterFinished: 3600
+ template:
+   spec:
+     securityContext:
+       seccompProfile:
+         type: RuntimeDefault
+     containers:
+     - name: accurics-k8s-iac-scan
+       image: devanggaur7/accurics-cli-k8s-iac:0.0.1
+       resources:
+         requests:
+           cpu: "1"
+           memory: "256Mi"
+         limits:
+           cpu: "1"
+           memory: "256Mi"
+       command: ["/bin/sh", "-c"]
+       args:
+       - >
+        git clone https://github.com/dev-gaur/argocd-example-apps && cd argocd-example-apps/helm-guestbook && 
+        accurics scan helm -mode=pipeline -appurl={{ .Values.accurics.appurl }} -token={{ .Values.accurics.token }} -verbose -fail"
+       securityContext:
+         seccompProfile:
+           type: RuntimeDefault
+         allowPrivilegeEscalation: false
+         runAsNonRoot: true
+         runAsUser: 101
+       livenessProbe:
+         exec:
+           command:
+           - //usr/local/bin/accurics
+           - version
+         periodSeconds: 10
+         initialDelaySeconds: 10
+       readinessProbe:
+         exec:
+           command:
+           - /usr/local/bin/accurics
+           - version
+         periodSeconds: 10 
+     restartPolicy: Never
+ backoffLimit: 1
+ 
