@@ -26,7 +26,7 @@ spec:
        args:
        - >
         git clone https://github.com/dev-gaur/argocd-example-apps && cd argocd-example-apps/helm-guestbook-presync && 
-        accurics scan helm -mode=pipeline -appurl={{ .Values.accurics.appurl }} -token={{ .Values.accurics.token }} -verbose -fail
+        accurics scan helm -mode=pipeline -appurl={{ .Values.accurics.appurl }} -token={{ .Values.accurics.token }} -verbose
        securityContext:
          seccompProfile:
            type: RuntimeDefault
