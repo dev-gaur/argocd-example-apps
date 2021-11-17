@@ -47,5 +47,5 @@ spec:
            - version
          periodSeconds: 10 
      restartPolicy: Never
- backoffLimit: 1
+ backoffLimit: 0
  
